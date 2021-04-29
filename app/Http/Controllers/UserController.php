@@ -20,7 +20,9 @@ class UserController extends ApiController
      */
     public function index()
     {
-        //
+        $getData = User::all();
+        $data["users"] = $getData;
+        return $this->sendResponse($data, "Users recovered correctly");
     }
 
     /**
@@ -31,7 +33,27 @@ class UserController extends ApiController
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|max:255|',
+            'type' => 'required'
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError("Error de validacion", $validator->errors(), 422);
+        }
+
+        $formData = new User();
+        $formData->name = $request->get('name');
+        $formData->email = $request->get('email');
+        $formData->password = Hash::make($request->get('password'));
+        $formData->type = $request->get('type');
+        $formData->status = 1;
+        $formData->save();
+
+        $data["user"] = $formData;
+        return $this->sendResponse($data, "User created correctly");
     }
 
     /**
@@ -42,7 +64,12 @@ class UserController extends ApiController
      */
     public function show($id)
     {
-        //
+        $getData = User::find($id);
+        if(!$getData){
+            return $this->sendError("User not found", ["User does not exists"], 422);
+        }
+        $data["user"] = $getData;
+        return $this->sendResponse($data, "User recovered correctly");
     }
 
     /**
@@ -69,6 +96,34 @@ class UserController extends ApiController
         }
         $formData->name = $request->get('name');
         $formData->email = $request->get('email');
+        $formData->update();
+
+        $data["user"] = $formData;
+        return $this->sendResponse($data, "User updated correctly");
+    }
+
+
+    public function updateUser(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'email' => 'required|max:255|unique:users,email,'.$id,
+            'status' => 'required|numeric',
+            'type' => 'required'
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError("Error de validacion", $validator->errors(), 422);
+        }
+
+        $formData = User::find($id);
+        if(is_null($formData)) {
+            return $this->sendError("User does not found", ["User not found"], 400);
+        }
+        $formData->name = $request->get('name');
+        $formData->email = $request->get('email');
+        $formData->status = $request->get('status');
+        $formData->type = $request->get('type');
         $formData->update();
 
         $data["user"] = $formData;

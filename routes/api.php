@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\MeasurementUnitController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SalesController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,4 +27,6 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::apiResource('/products', ProductController::class);
     Route::apiResource('/measurement-unit', MeasurementUnitController::class);
     Route::apiResource('/user', UserController::class);
+    Route::put('/update-user/{id}', [UserController::class, 'updateUser']);
+    Route::apiResource('/sales', SalesController::class);
 });

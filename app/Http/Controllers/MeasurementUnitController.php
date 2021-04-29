@@ -51,6 +51,18 @@ class MeasurementUnitController extends ApiController
         $data["MeasurementUnit"] = $formData;
         return $this->sendResponse($data, "MeasurementUnit saved correctly");
     }
+
+    public function show($id)
+    {
+        $dataGet = MeasurementUnit::find($id);
+        $data = [];
+        if(!is_null($dataGet)){
+            $data["measurement_unit"] = $dataGet;
+            return $this->sendResponse($data, "MeasurementUnit obtained correctly");   
+        }else{
+            return $this->sendResponse(["MeasurementUnit does not exists"], "MeasurementUnit not found");
+        }
+    }
     /**
      * Update the specified resource in storage.
      *
