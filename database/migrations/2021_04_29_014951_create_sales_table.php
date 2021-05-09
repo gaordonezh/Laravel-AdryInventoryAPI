@@ -17,8 +17,8 @@ class CreateSalesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('id_user');
             $table->foreign('id_user')->references('id')->on('users');
-            $table->double('discount')->nullable();
-            $table->double('total');
+            $table->double('discount',8,2)->nullable();
+            $table->double('total',8,2);
             $table->boolean('status');
             $table->timestamps();
         });

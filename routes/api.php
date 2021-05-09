@@ -29,4 +29,5 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::apiResource('/user', UserController::class);
     Route::put('/update-user/{id}', [UserController::class, 'updateUser']);
     Route::apiResource('/sales', SalesController::class);
+    Route::post('/anular-venta', [SalesController::class, 'anularVenta']);
 });
