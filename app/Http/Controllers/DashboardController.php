@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\MeasurementUnit;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Sales;
+use Carbon\Carbon;
 
 class DashboardController extends ApiController
 {
@@ -23,11 +25,28 @@ class DashboardController extends ApiController
         $totalUsers = User::where('status',1)->get();
         $lastProducts = Product::where('status',1)->orderBy('id', 'desc')->limit(5)->get();
 
+        $dateOne = Sales::where('created_at','LIKE',Carbon::now()->format('Y-m-d').'%')->sum('total');
+        $dateTwo = Sales::where('created_at','LIKE',Carbon::now()->subDays(1)->format('Y-m-d').'%')->sum('total');
+        $dateThree = Sales::where('created_at','LIKE',Carbon::now()->subDays(2)->format('Y-m-d').'%')->sum('total');
+        $dateFour = Sales::where('created_at','LIKE',Carbon::now()->subDays(3)->format('Y-m-d').'%')->sum('total');
+        $dateFive = Sales::where('created_at','LIKE',Carbon::now()->subDays(4)->format('Y-m-d').'%')->sum('total');
+        $dateSix = Sales::where('created_at','LIKE',Carbon::now()->subDays(5)->format('Y-m-d').'%')->sum('total');
+        $dateSeven = Sales::where('created_at','LIKE',Carbon::now()->subDays(6)->format('Y-m-d').'%')->sum('total');
+
+        $dataDates['uno'] = $dateOne;
+        $dataDates['dos'] = $dateTwo;
+        $dataDates['tres'] = $dateThree;
+        $dataDates['cuatro'] = $dateFour;
+        $dataDates['cinco'] = $dateFive;
+        $dataDates['seis'] = $dateSix;
+        $dataDates['siete'] = $dateSeven;
+
         $data["totalCategories"] = count($totalCategories);
         $data["totalMeasurementUnit"] = count($totalMeasurementUnit);
         $data["totalProducts"] = count($totalProducts);
         $data["totalUsers"] = count($totalUsers);
         $data["lastProducts"] = $lastProducts;
+        $data["dates"] = $dataDates;
 
         return $this->sendResponse($data, "Dashboard data obtained correctly");
     }
