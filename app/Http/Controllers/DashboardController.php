@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Sales;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends ApiController
 {
@@ -25,13 +26,14 @@ class DashboardController extends ApiController
         $totalUsers = User::where('status',1)->get();
         $lastProducts = Product::where('status',1)->orderBy('id', 'desc')->limit(5)->get();
 
-        $dateOne = Sales::where('created_at','LIKE',Carbon::now()->format('Y-m-d').'%')->sum('total');
-        $dateTwo = Sales::where('created_at','LIKE',Carbon::now()->subDays(1)->format('Y-m-d').'%')->sum('total');
-        $dateThree = Sales::where('created_at','LIKE',Carbon::now()->subDays(2)->format('Y-m-d').'%')->sum('total');
-        $dateFour = Sales::where('created_at','LIKE',Carbon::now()->subDays(3)->format('Y-m-d').'%')->sum('total');
-        $dateFive = Sales::where('created_at','LIKE',Carbon::now()->subDays(4)->format('Y-m-d').'%')->sum('total');
-        $dateSix = Sales::where('created_at','LIKE',Carbon::now()->subDays(5)->format('Y-m-d').'%')->sum('total');
-        $dateSeven = Sales::where('created_at','LIKE',Carbon::now()->subDays(6)->format('Y-m-d').'%')->sum('total');
+        $dateOne = Sales::select(DB::raw('SUM(total - discount) as total'))->where('status',1)->where('created_at','LIKE',Carbon::now()->format('Y-m-d').'%')->first();
+        $dateTwo = Sales::select(DB::raw('SUM(total - discount) as total'))->where('status',1)->where('created_at','LIKE',Carbon::now()->subDays(1)->format('Y-m-d').'%')->first();
+        $dateThree = Sales::select(DB::raw('SUM(total - discount) as total'))->where('status',1)->where('created_at','LIKE',Carbon::now()->subDays(2)->format('Y-m-d').'%')->first();
+        $dateFour = Sales::select(DB::raw('SUM(total - discount) as total'))->where('status',1)->where('created_at','LIKE',Carbon::now()->subDays(3)->format('Y-m-d').'%')->first();
+        $dateFive = Sales::select(DB::raw('SUM(total - discount) as total'))->where('status',1)->where('created_at','LIKE',Carbon::now()->subDays(4)->format('Y-m-d').'%')->first();
+        $dateSix = Sales::select(DB::raw('SUM(total - discount) as total'))->where('status',1)->where('created_at','LIKE',Carbon::now()->subDays(5)->format('Y-m-d').'%')->first();
+        $dateSeven = Sales::select(DB::raw('SUM(total - discount) as total'))->where('status',1)->where('created_at','LIKE',Carbon::now()->subDays(6)->format('Y-m-d').'%')->first();
+        $ventasMES = Sales::select(DB::raw('SUM(total - discount) as total'))->where('status',1)->where('created_at','LIKE',Carbon::now()->subDays(6)->format('Y-m').'%')->first();
 
         $dataDates['uno'] = $dateOne;
         $dataDates['dos'] = $dateTwo;
@@ -47,6 +49,7 @@ class DashboardController extends ApiController
         $data["totalUsers"] = count($totalUsers);
         $data["lastProducts"] = $lastProducts;
         $data["dates"] = $dataDates;
+        $data["ventasMES"] = $ventasMES;
 
         return $this->sendResponse($data, "Dashboard data obtained correctly");
     }
