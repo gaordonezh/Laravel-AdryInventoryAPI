@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\MeasurementUnitController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\ReportController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,4 +31,6 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::put('/update-user/{id}', [UserController::class, 'updateUser']);
     Route::apiResource('/sales', SalesController::class);
     Route::post('/anular-venta', [SalesController::class, 'anularVenta']);
+    //Reportes
+    Route::get('report/sales/{value}', [ReportController::class, 'reportSales']);
 });
